@@ -1,0 +1,20 @@
+#jojo_weather_div #weather-current {
+    padding-bottom: 7px;
+}
+
+#jojo_weather_div #weather-forecasts {
+}
+
+#jojo_weather_div div.weather-conditions {
+    float: left;
+}
+
+#jojo_weather_div #weather-credits {
+    margin-top:12px;
+    margin-right:5px;
+}
+
+#jojo_weather_div #weather-credits p, #weather-credits a {
+    font-size:9px;
+    text-align:right;
+}
