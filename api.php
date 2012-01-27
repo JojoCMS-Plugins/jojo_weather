@@ -17,6 +17,8 @@
 
 Jojo::addFilter('output', 'inpageweather', 'jojo_weather');
 
+Jojo::addFilter('output', 'inpageweatherwithcode', 'jojo_weather');
+
 $_options[] = array(
     'id' => 'weather_partnerid',
     'category' => 'Weather Widget',

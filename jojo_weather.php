@@ -176,4 +176,24 @@ class JOJO_Plugin_jojo_weather extends JOJO_Plugin
         $html = self::getWeatherHTML();
         return str_replace('[[weather]]', $html['content'], $content);
     }
+    
+    public static function inpageweatherwithcode($content)
+    {
+        if(strpos($content, '[[weather') == false) {
+        	return $content;
+        }
+        
+        /* get all matches for weather locations */
+        preg_match_all('/\[\[weather:([^\]]*)\]\]/', $content, $matches);
+        if($matches[1]) {
+        	/* set the location to the value passed */
+        	foreach($matches[1] as $id => $match) {
+        		$_SESSION['weatherloc'] = $match;
+        		$html = self::getWeatherHTML();
+        		$content = str_replace($matches[0][$id], $html['content'], $content);
+        	}
+        }
+        
+        return $content;
+    }
 }
