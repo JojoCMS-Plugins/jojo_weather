@@ -131,37 +131,36 @@ class JOJO_Plugin_jojo_weather extends JOJO_Plugin
     private static function _domtoarray($node) {
         $res = array();
         $childNames = array();
-        foreach ($node->childNodes as $c) {
-
-
-            $name = $c->nodeName;
-            $value = false;
-            if ($c->nodeType == XML_TEXT_NODE && trim($c->nodeValue)) {
-                $value = trim($c->nodeValue);
-            } elseif (($c->nodeType == XML_ELEMENT_NODE)) {
-                $value = self::_domtoarray($c);
-                if ($c->hasAttribute('d')) {
-                    $value = (array)$value;
-                    $value['d'] = ($c->getAttribute('d'));
-                    $value['fdate'] = ($c->getAttribute('dt'));
-                    $value['fdateday'] = ($c->getAttribute('t'));
-                } elseif ($c->getAttribute('p')) {
-                    $value = (array)$value;
-                    $value['p'] = $c->getAttribute('p');
-                }
-            } else {
-                continue;
-            }
-
-            $childNames[$name] = isset($childNames[$name]) ? $childNames[$name] + 1 : 1;
-            if (isset($res[$name])) {
-                if ($childNames[$name] == 2) {
-                    $res[$name] = array($res[$name], $value);
+        if (property_exists($node, 'childNodes')) {
+            foreach ($node->childNodes as $c) {
+                $name = $c->nodeName;
+                $value = false;
+                if ($c->nodeType == XML_TEXT_NODE && trim($c->nodeValue)) {
+                    $value = trim($c->nodeValue);
+                } elseif (($c->nodeType == XML_ELEMENT_NODE)) {
+                    $value = self::_domtoarray($c);
+                    if ($c->hasAttribute('d')) {
+                        $value = (array)$value;
+                        $value['d'] = ($c->getAttribute('d'));
+                        $value['fdate'] = ($c->getAttribute('dt'));
+                        $value['fdateday'] = ($c->getAttribute('t'));
+                    } elseif ($c->getAttribute('p')) {
+                        $value = (array)$value;
+                        $value['p'] = $c->getAttribute('p');
+                    }
                 } else {
-                    $res[$name][] = $value;
+                    continue;
                 }
-            } else {
-                $res[$name] = $value;
+                $childNames[$name] = isset($childNames[$name]) ? $childNames[$name] + 1 : 1;
+                if (isset($res[$name])) {
+                    if ($childNames[$name] == 2) {
+                        $res[$name] = array($res[$name], $value);
+                    } else {
+                        $res[$name][] = $value;
+                    }
+                } else {
+                    $res[$name] = $value;
+                }
             }
         }
 
@@ -176,13 +175,13 @@ class JOJO_Plugin_jojo_weather extends JOJO_Plugin
         $html = self::getWeatherHTML();
         return str_replace('[[weather]]', $html['content'], $content);
     }
-    
+
     public static function inpageweatherwithcode($content)
     {
         if(strpos($content, '[[weather') == false) {
         	return $content;
         }
-        
+
         /* get all matches for weather locations */
         preg_match_all('/\[\[weather:([^\]]*)\]\]/', $content, $matches);
         if($matches[1]) {
@@ -193,7 +192,7 @@ class JOJO_Plugin_jojo_weather extends JOJO_Plugin
         		$content = str_replace($matches[0][$id], $html['content'], $content);
         	}
         }
-        
+
         return $content;
     }
 }
